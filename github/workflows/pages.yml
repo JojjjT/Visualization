@@ -1,0 +1,91 @@
+# Build Marimo WASM + deploy static site to GitHub Pages
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install marimo pandas numpy matplotlib plotly
+
+      - name: Prepare notebook + public data
+        run: |
+          mkdir -p site
+          # Datos junto al notebook (marimo copia public/ al exportar)
+          mkdir -p notebooks/public
+          if [ -f public/whr24.csv ]; then
+            cp public/whr24.csv notebooks/public/whr24.csv
+          fi
+          # Plotly estático (no depende de WASM)
+          if [ -f Equipo7_Proyecto2_Interactivos.html ]; then
+            cp Equipo7_Proyecto2_Interactivos.html site/
+          fi
+          if [ -f index.html ]; then
+            cp index.html site/
+          fi
+          # README opcional
+          if [ -f README.md ]; then
+            cp README.md site/
+          fi
+
+      - name: Export Marimo → WASM HTML
+        run: |
+          source .venv/bin/activate
+          # --mode run = app de solo lectura
+          marimo export html-wasm notebooks/Equipo7_Proyecto2_Marimo.py \
+            -o site/wasm \
+            --mode run
+          # Asegurar datos en el export
+          mkdir -p site/wasm/public
+          if [ -f public/whr24.csv ]; then
+            cp -f public/whr24.csv site/wasm/public/whr24.csv
+          fi
+          # GitHub Pages: no procesar con Jekyll
+          touch site/.nojekyll
+          touch site/wasm/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

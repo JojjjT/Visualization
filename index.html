@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Equipo 7 · Recetas de bienestar · WHR 2024</title>
+  <style>
+    :root { --blue: #0072B2; --orange: #D55E00; --bg: #f7f9fc; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      margin: 0; background: var(--bg); color: #1a1a1a; line-height: 1.55;
+    }
+    header {
+      background: linear-gradient(135deg, #0072B2 0%, #005a8c 100%);
+      color: white; padding: 2.5rem 1.5rem; text-align: center;
+    }
+    header h1 { margin: 0 0 0.4rem; font-size: 1.6rem; font-weight: 700; }
+    header p { margin: 0; opacity: 0.92; font-size: 0.95rem; }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    .card {
+      background: white; border-radius: 12px; padding: 1.4rem 1.5rem;
+      margin-bottom: 1.25rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid #e5eaf0;
+    }
+    .card h2 { margin: 0 0 0.6rem; font-size: 1.12rem; color: var(--blue); }
+    .card p { margin: 0.4rem 0; font-size: 0.95rem; }
+    a.btn {
+      display: inline-block; margin: 0.35rem 0.4rem 0.35rem 0;
+      padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none;
+      font-weight: 600; font-size: 0.9rem;
+    }
+    a.primary { background: var(--blue); color: white; }
+    a.secondary { background: #eef4f9; color: var(--blue); border: 1px solid #c5d8ea; }
+    a.accent { background: var(--orange); color: white; }
+    ul { margin: 0.4rem 0; padding-left: 1.2rem; }
+    li { margin: 0.25rem 0; font-size: 0.92rem; }
+    footer { text-align: center; padding: 1.5rem; font-size: 0.82rem; color: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recetas de bienestar · WHR 2024</h1>
+    <p>Equipo 7 · Joshua Trujillo y Nicolás Figueroa · Visualización I · Universidad Externado de Colombia</p>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Pregunta analítica</h2>
+      <p>¿Qué «recetas» de bienestar predominan entre los países con mayor y menor evaluación de vida según el World Happiness Report 2024, y en qué medida el componente no explicado (Distopía + residual) altera o cuestiona dichas recetas?</p>
+    </div>
+    <div class="card">
+      <h2>Visualizaciones interactivas (Plotly)</h2>
+      <p>Dispersión receta vs. ladder score y Top-15 por dimensión con selector. Funciona sin WASM.</p>
+      <p><a class="btn primary" href="Equipo7_Proyecto2_Interactivos.html">Abrir gráficos Plotly</a></p>
+    </div>
+    <div class="card">
+      <h2>Notebook ejecutable (Marimo · WASM)</h2>
+      <p>Análisis completo en el navegador (generado por GitHub Actions).</p>
+      <p><a class="btn accent" href="wasm/">Abrir notebook Marimo</a></p>
+    </div>
+    <div class="card">
+      <h2>Hallazgos clave</h2>
+      <ul>
+        <li>Las recetas de los terciles extremos tienen la misma estructura (PIB + apoyo social &gt; 60 %).</li>
+        <li>La diferencia es de <strong>nivel</strong>, no de composición.</li>
+        <li>El residual <em>D</em> varía de −0,07 a 3,00; seis de los diez países con mayor <em>D</em> son latinoamericanos.</li>
+        <li>Atípicos bajos se concentran en el tercil inferior.</li>
+      </ul>
+    </div>
+  </main>
+  <footer>
+    Fuente: World Happiness Report 2024 · Data for Figure 2.1<br>
+    Asociaciones, no causalidad.
+  </footer>
+</body>
+</html>

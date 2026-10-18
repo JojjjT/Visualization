@@ -55,18 +55,39 @@ def _(mo):
 
 
 @app.cell
-def _(mo, pathlib, pd):
-    _base = pathlib.Path(str(mo.notebook_location())) if hasattr(mo, "notebook_location") else pathlib.Path(".")
-    _candidates = [
-        _base / "public" / "whr24.csv",
-        pathlib.Path("public") / "whr24.csv",
-        _base.parent / "public" / "whr24.csv",
+def _(mo, pd):
+    # En WASM no hay filesystem: el CSV se sirve por HTTP junto al HTML.
+    # Probar rutas relativas al notebook / página y URL absoluta de Pages.
+    _sources = [
+        "public/whr24.csv",
+        "./public/whr24.csv",
+        "../public/whr24.csv",
+        "https://jojjjt.github.io/Visualization/wasm/public/whr24.csv",
+        "https://jojjjt.github.io/Visualization/public/whr24.csv",
     ]
-    csv_path = next((p for p in _candidates if p.exists()), None)
-    if csv_path is None:
-        raise FileNotFoundError("No se encontró public/whr24.csv")
-    df = pd.read_csv(csv_path)
-    mo.md(f"**Datos:** {len(df)} países · `{csv_path.name}`")
+    if hasattr(mo, "notebook_location"):
+        _loc = str(mo.notebook_location()).rstrip("/")
+        _sources = [
+            f"{_loc}/public/whr24.csv",
+            f"{_loc}/../public/whr24.csv",
+        ] + _sources
+
+    df = None
+    _used = None
+    _errors = []
+    for _src in _sources:
+        try:
+            df = pd.read_csv(_src)
+            _used = _src
+            break
+        except Exception as _e:
+            _errors.append(f"{_src}: {type(_e).__name__}")
+
+    if df is None:
+        raise FileNotFoundError(
+            "No se pudo cargar whr24.csv. Intentos: " + " | ".join(_errors)
+        )
+    mo.md(f"**Datos:** {len(df)} países · fuente `{_used}`")
     return (df,)
 
 

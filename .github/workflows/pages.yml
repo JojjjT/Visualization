@@ -66,9 +66,10 @@ jobs:
             -o site/wasm \
             --mode run
           # Asegurar datos en el export
-          mkdir -p site/wasm/public
+          mkdir -p site/wasm/public site/public
           if [ -f public/whr24.csv ]; then
             cp -f public/whr24.csv site/wasm/public/whr24.csv
+            cp -f public/whr24.csv site/public/whr24.csv
           fi
           # GitHub Pages: no procesar con Jekyll
           touch site/.nojekyll
